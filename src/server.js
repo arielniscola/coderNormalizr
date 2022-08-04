@@ -5,7 +5,7 @@ const app = express()
 const serverExpress = app.listen(8080, () => console.log('Servidor escuchando puerto 8080'))
 const io = new IOServer(serverExpress)
 const route = require('./routes/index');
-
+const  { engine } = require('express-handlebars')
 //creo instancias de contenedores y busco las configuraciones de las BD
 const Contenedor = require('./contenedor/contenedor');
 const {configSqlite }= require('./connections/config');
@@ -16,7 +16,14 @@ const productoContenedor = new Contenedor(configMariaDB, 'Producto');
 
 app.use(express.static(path.join(__dirname, './public')))
 
-app.use('/', route);
+app.engine('hbs', engine({
+    extname: '.hbs',
+    defaultLayout: path.join(__dirname, './public/views/layouts/index.hbs')
+}))
+app.set('views', path.join(__dirname, './public/views'));
+app.set('view engine', 'hbs');
+
+app.use('/api', route);
 
 io.on('connection', async socket => {
     console.log(`Se conecto un usuario ${socket.id}`)
@@ -40,3 +47,4 @@ io.on('connection', async socket => {
         io.emit('server:products', products)
     })
 })
+

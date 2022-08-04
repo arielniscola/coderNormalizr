@@ -7,9 +7,10 @@ class ProductosAleatorios{
     }
 
     dataCreate(){
+        this.productos = []
         for (let i = 0; i < 5; i++) {
           this.productos.push({
-            id: i,
+            id: i+1,
             nombre: faker.commerce.product(),
             precio: faker.commerce.price(),
             foto: faker.image.imageUrl()
